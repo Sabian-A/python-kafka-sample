@@ -4,24 +4,34 @@ services:
     image: confluentinc/cp-kafka:latest
     ports:
       - "9092:9092"
+    hostname: "kafka"
     environment:
       - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
       - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
       - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
     depends_on:
       - zookeeper
+    networks:
+      - mynetwork
 
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
+    container_name: zookeeper
     ports:
       - "2181:2181"
     environment:
       - ZOOKEEPER_CLIENT_PORT=2181
+      - ZOOKEEPER_TICK_TIME=2000
+    networks:
+      - mynetwork
 
   spark:
     image: bitnami/spark:latest
     ports:
       - "4040:4040"
+    hostname: spark
+    environment:
+      KAFKA_SERVER: kafka
 
   mongodb:
     image: mongo:latest
@@ -29,3 +39,5 @@ services:
       - "27017:27017"
     volumes:
       - ./data:/data/db
+networks:
+  mynetwork:
