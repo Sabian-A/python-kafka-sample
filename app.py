@@ -4,6 +4,7 @@ from kafka.admin import KafkaAdminClient, NewTopic
 from kafka.errors import KafkaError
 from pymongo import MongoClient
 import smtplib
+import random
 from email.mime.text import MIMEText
 
 # Kafka configuration
@@ -60,7 +61,7 @@ def save_email_to_mongodb(email):
 
 # Generate OTP and update Mongo
 def generate_otp(email):
-    otp = "123456"  
+    otp = random.randint(1000, 9999) 
     mongo_collection.update_one({'email': email}, {'$set': {'otp': otp}})
     print(f"OTP generated and saved to MongoDB for email: {email}")
     send_otp_email(email, otp)
